@@ -1,42 +1,81 @@
 package gestionBar.model.entities;
 
+import javax.swing.*;
+import java.util.Vector;
+
 public abstract class Product
 {
     protected String name;
-    protected String imageName;
+    protected ImageIcon image;
+    protected double buyPrice;
+    protected int quantity;
 
     // Constructors
-    public Product(String n, String img)
+    public Product(String n, ImageIcon img, double bp, int q)
     {
         name = n;
-        imageName = img;
+        image = (img == null ? new ImageIcon("src/ressources/images/Default.png") : img);
+        buyPrice = bp;
+        quantity = q;
     }
 
     public Product()
     {
-        this("Unknown", "Default.png");
-    }
-
-    public Product(Product p)
-    {
-        this(p.getName(), p.getImageName());
+        this("Unknown", new ImageIcon("Default.png"), 0, 0);
     }
 
     // ======= Getters =======
     public String getName()
     { return name; }
 
-    public String getImageName()
-    { return imageName; }
+    public ImageIcon getImage()
+    { return image; }
+
+    public double getBuyPrice()
+    { return buyPrice; }
+
+    public int getQuantity()
+    { return quantity; }
 
     // ======= Setters =======
     public void setName(String newName)
     { name = newName; }
 
-    public void setImageName(String imgPath)
-    { imageName = imgPath; }
+    public void setImage(ImageIcon newImage)
+    { image = newImage; }
 
-    // Override
+
+
+    // ======= Other methods =======
+
+    public static int FieldAmmount()
+    { return 4; }
+
+    public static Vector<String> getFieldNames()
+    {
+        Vector<String> v = new Vector<>();
+
+        v.add("Name");
+        v.add("Image path");
+        v.add("Buy price");
+        v.add("Quantity");
+
+        return v;
+    }
+
+    public Object getFieldAt(int i)
+    {
+        switch(i)
+        {
+            case 0: return getName();
+            case 1: return getImage().toString();
+            case 2: return getBuyPrice();
+            case 3: return getQuantity();
+            default: return null;
+        }
+    }
+
+    // ======= Override =======
     @Override
     public String toString()
     {

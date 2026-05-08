@@ -1,7 +1,9 @@
 package gestionBar.model.entities;
 
+import gestionBar.model.exceptions.ESellPriceLowerThanBuyPrice;
+
 public interface Sellable
 {
-    float getSellPrice();
-    void setSellPrice(float newPrice);
+    double getSellPrice();
+    void setSellPrice(double newPrice) throws ESellPriceLowerThanBuyPrice;
 }

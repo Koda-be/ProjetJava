@@ -1,24 +1,34 @@
 package gestionBar.model.entities;
 
+import gestionBar.model.exceptions.ESellPriceLowerThanBuyPrice;
+
+import javax.swing.*;
+import java.util.Vector;
+
 public class Wine extends Product implements Buyable, Sellable, Quantifiable
 {
-    protected float buyPrice;
-    protected float sellPrice;
-    protected int quantity;
+    private double sellPrice;
     private String cepage;
     private Colour colour;
     private int millesime;
 
     // Constructors
-    public Wine(String n, String img, float bp, float sp, int q, String cep, Colour col, int m)
+    public Wine(String n, ImageIcon img, double bp, double sp, int q, String cep, Colour col, int m)
     {
-        super(n, img);
-        buyPrice = bp;
-        sellPrice = sp;
-        quantity = q;
+        super(n, img, bp, q);
         cepage = cep;
         colour = col;
         millesime = m;
+
+        try
+        {
+            setSellPrice(sp);
+        }
+        catch(ESellPriceLowerThanBuyPrice e)
+        {
+            sellPrice = buyPrice;
+            throw e;
+        }
     }
 
     public Wine()
@@ -31,18 +41,13 @@ public class Wine extends Product implements Buyable, Sellable, Quantifiable
 
     public Wine(Wine w)
     {
-        this(w.getName(), w.getImageName(), w.getBuyPrice(), w.getSellPrice(), w.getQuantity(), w.getCepage(), w.getColour(), w.getMillesime());
+        this(w.getName(), w.getImage(), w.getBuyPrice(), w.getSellPrice(), w.getQuantity(), w.getCepage(), w.getColour(), w.getMillesime());
     }
 
     // ======= Getters =======
-    public float getBuyPrice()
-    { return buyPrice; }
 
-    public float getSellPrice()
+    public double getSellPrice()
     { return sellPrice; }
-
-    public int getQuantity()
-    { return quantity; }
 
     public String getCepage()
     { return cepage; }
@@ -57,7 +62,7 @@ public class Wine extends Product implements Buyable, Sellable, Quantifiable
     public void setBuyPrice(float newPrice)
     { buyPrice = newPrice; }
 
-    public void setSellPrice(float newPrice)
+    public void setSellPrice(double newPrice) throws ESellPriceLowerThanBuyPrice
     {
         if(newPrice < buyPrice) throw new ESellPriceLowerThanBuyPrice(this, buyPrice, newPrice);
         sellPrice = newPrice;
@@ -75,6 +80,21 @@ public class Wine extends Product implements Buyable, Sellable, Quantifiable
     public void setMillesime(int newMil)
     { millesime = newMil; }
 
+
+    public static int FieldAmmount()
+    { return Product.FieldAmmount() + 4; }
+
+    public static Vector<String> getFieldNames()
+    {
+        Vector<String> v = Product.getFieldNames();
+        v.insertElementAt("Sell price", 3);
+        v.add("Cepage");
+        v.add("Colour");
+        v.add("Millesime");
+
+        return v;
+    }
+
     // Override
     @Override
     public String toString()
@@ -86,5 +106,21 @@ public class Wine extends Product implements Buyable, Sellable, Quantifiable
         if(!(o instanceof Wine)) return false;
         Wine w = (Wine) o;
         return super.equals(w) && buyPrice == w.getBuyPrice() && sellPrice == w.getSellPrice() && cepage.equals(w.getCepage()) && colour.equals(w.getColour()) && millesime == w.getMillesime();
+    }
+
+    @Override
+    public Object getFieldAt(int i)
+    {
+        if (i < 3) return super.getFieldAt(i);
+
+        switch (i)
+        {
+            case 3: return getSellPrice();
+            case 4: return getQuantity();
+            case 5: return getCepage();
+            case 6: return getColour();
+            case 7: return getMillesime();
+            default: return null;
+        }
     }
 }

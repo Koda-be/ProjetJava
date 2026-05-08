@@ -1,20 +1,18 @@
 package gestionBar.model.entities;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Vector;
 
 public class Ingredient extends Product implements Buyable, Quantifiable
 {
-    protected float buyPrice;
-    protected int quantity;
     private LocalDate expirationDate;
 
     // ======= Constructors =======
-    public Ingredient(String n, String img, float bp, int q, LocalDate expDate)
+    public Ingredient(String n, ImageIcon img, double bp, int q, LocalDate expDate)
     {
-        super(n, img);
-        buyPrice = bp;
-        quantity = q;
+        super(n, img, bp, q);
         expirationDate = expDate;
     }
 
@@ -25,12 +23,8 @@ public class Ingredient extends Product implements Buyable, Quantifiable
         quantity = 0;
         expirationDate = LocalDate.now().plus(Period.of(0,2,0));
     }
-    // ======= Getters =======
-    public float getBuyPrice()
-    { return buyPrice; }
 
-    public int getQuantity()
-    { return quantity; }
+    // ======= Getters =======
 
     public LocalDate getExpirationDate()
     { return expirationDate; }
@@ -44,6 +38,17 @@ public class Ingredient extends Product implements Buyable, Quantifiable
 
     public void setExpirationDate(LocalDate newDate)
     { expirationDate = newDate; }
+
+    public static int FieldAmmount()
+    { return Product.FieldAmmount() + 1; }
+
+    public static Vector<String> getFieldNames()
+    {
+        Vector<String> v = Product.getFieldNames();
+        v.add("Expiration date");
+
+        return v;
+    }
 
     // ======= Override =======
 
@@ -59,5 +64,14 @@ public class Ingredient extends Product implements Buyable, Quantifiable
         if(!(o instanceof Ingredient)) return false;
         Ingredient i = (Ingredient) o;
         return super.equals(i) && buyPrice == i.getBuyPrice() && expirationDate.equals(i.getExpirationDate());
+    }
+
+    @Override
+    public Object getFieldAt(int i)
+    {
+        if (i < 4) return super.getFieldAt(i);
+
+        if (i == 4) return getExpirationDate();
+        return null;
     }
 }

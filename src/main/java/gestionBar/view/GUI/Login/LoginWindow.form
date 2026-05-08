@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gestionBar.view.Login.LoginWindow">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gestionBar.view.GUI.Login.LoginWindow">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="3" left="3" bottom="3" right="3"/>
+    <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
       <xy x="52" y="39" width="291" height="180"/>
     </constraints>

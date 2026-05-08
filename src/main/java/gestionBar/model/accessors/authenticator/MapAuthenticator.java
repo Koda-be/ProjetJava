@@ -9,6 +9,7 @@ public class MapAuthenticator extends Authenticator
 
     public MapAuthenticator()
     {
+        mapData.put("Unlogged", "");
         mapData.put("Lio","Lio123");
         mapData.put("Deb", "Deb456");
         mapData.put("Mario", "Yahoo");
