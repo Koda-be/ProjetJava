@@ -14,7 +14,7 @@ import java.util.Vector;
 
 public class ProductWindow extends JDialog implements ProductEditor
 {
-    private Product p;
+    private Product product;
     private ImageIcon img;
     private Vector<Ingredient> ing;
 
@@ -38,6 +38,8 @@ public class ProductWindow extends JDialog implements ProductEditor
     final static String WINE = "Wine";
     final static String DISH = "Dish";
     final static String INGREDIENT = "Ingredient";
+    final static String EMPTY = "Empty";
+    final static String CLASS = "Class";
 
     public ProductWindow(Vector<Ingredient> ingredients)
     {
@@ -51,7 +53,7 @@ public class ProductWindow extends JDialog implements ProductEditor
         dishRadioButton.setText(DISH);
         ingredientRadioButton.setText(INGREDIENT);
 
-        CardLayout cardLayout = (CardLayout) fieldPanel.getLayout();
+        //CardLayout cardLayout = (CardLayout) fieldPanel.getLayout();
 
         winePanel = new WinePanel();
         dishPanel = new DishPanel(ing);
@@ -69,33 +71,23 @@ public class ProductWindow extends JDialog implements ProductEditor
             @Override
             public void itemStateChanged(ItemEvent e)
             {
-
-                ((CardLayout) (fieldPanel.getLayout())).next(fieldPanel);
-
-                /*if(e.getSource() == wineRadioButton && e.getStateChange() == ItemEvent.SELECTED)
+                if(e.getSource() == wineRadioButton && e.getStateChange() == ItemEvent.SELECTED)
                 {
-                    ((CardLayout) (cardPanel.getLayout())).show(cardPanel, WINE);
+                    ((CardLayout) (fieldPanel.getLayout())).show(fieldPanel, WINE);
                     currEditor = winePanel;
                 }
 
                 else if(e.getSource() == dishRadioButton && e.getStateChange() == ItemEvent.SELECTED)
                 {
-                    ((CardLayout) (cardPanel.getLayout())).show(cardPanel, DISH);
+                    ((CardLayout) (fieldPanel.getLayout())).show(fieldPanel, DISH);
                     currEditor = dishPanel;
                 }
 
                 else if(e.getSource() == ingredientRadioButton && e.getStateChange() == ItemEvent.SELECTED)
                 {
-                    ((CardLayout) (cardPanel.getLayout())).show(cardPanel, INGREDIENT);
+                    ((CardLayout) (fieldPanel.getLayout())).show(fieldPanel, INGREDIENT);
                     currEditor = ingredientPanel;
                 }
-
-                ((JPanel) currEditor).setOpaque(true);
-                ((JPanel) currEditor).setVisible(true);
-
-
-                 */
-
                 revalidate();
                 repaint();
             }
@@ -110,9 +102,9 @@ public class ProductWindow extends JDialog implements ProductEditor
             @Override
             public void actionPerformed(ActionEvent actionEvent)
             {
-                p = currEditor.getProduct();
+                product = currEditor.getProduct();
 
-                if(p != null) p.setImage(img);
+                if(product != null) product.setImage(img);
 
                 setVisible(false);
             }
@@ -123,7 +115,7 @@ public class ProductWindow extends JDialog implements ProductEditor
             @Override
             public void actionPerformed(ActionEvent actionEvent)
             {
-                p = null;
+                product = null;
                 setVisible(false);
             }
         });
@@ -177,34 +169,38 @@ public class ProductWindow extends JDialog implements ProductEditor
 
     public Product getProduct()
     {
-        return p;
+        return product;
     }
 
     @Override
     public void setProduct(Product prod)
     {
         setTitle("Modify product");
-        img = p.getImage();
+        img = prod.getImage();
         imageLabel.setIcon(img);
 
-        classPanel = new JPanel();
+        classPanel.setVisible(false);
 
         ProductEditor pane;
+        String str;
 
         if(prod instanceof Wine)
         {
-            pane = new WinePanel();
-            p = new Wine(prod.getName(), prod.getImage(), prod.getBuyPrice(), ((Wine) prod).getSellPrice(), prod.getQuantity(), ((Wine) prod).getCepage(), ((Wine) prod).getColour(), ((Wine) prod).getMillesime());
+            pane = winePanel;
+            str = WINE;
+            product = new Wine(prod.getName(), prod.getImage(), prod.getBuyPrice(), ((Wine) prod).getSellPrice(), prod.getQuantity(), ((Wine) prod).getCepage(), ((Wine) prod).getColour(), ((Wine) prod).getMillesime());
         }
         else if(prod instanceof Dish)
         {
-            pane = new DishPanel(ing);
-            p = new Dish(prod.getName(), prod.getImage(), ((Dish) prod).getSellPrice(), ((Dish) prod).getIngredients());
+            pane = dishPanel;
+            str = DISH;
+            product = new Dish(prod.getName(), prod.getImage(), ((Dish) prod).getSellPrice(), ((Dish) prod).getIngredients());
         }
         else if(prod instanceof Ingredient)
         {
-            pane = new IngredientPanel();
-            p = new Ingredient(prod.getName(), prod.getImage(), prod.getBuyPrice(), prod.getQuantity(), ((Ingredient) prod).getExpirationDate());
+            pane = ingredientPanel;
+            str = INGREDIENT;
+            product = new Ingredient(prod.getName(), prod.getImage(), prod.getBuyPrice(), prod.getQuantity(), ((Ingredient) prod).getExpirationDate());
         }
         else
         {
@@ -215,11 +211,10 @@ public class ProductWindow extends JDialog implements ProductEditor
             throw new EWrongTypeUsed("ProductTableModel.getColumnCount()", prod.getClass(), ev);
         }
 
-        pane.setProduct(p);
+        pane.setProduct(product);
+        ((CardLayout) fieldPanel.getLayout()).show(fieldPanel, str);
 
-        fieldPanel = new JPanel();
-        fieldPanel.add((JPanel) pane);
-        fieldPanel.revalidate();
+
     }
 
     public static void main(String[] args)
