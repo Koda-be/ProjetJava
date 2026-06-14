@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Vector;
 
-public class DishPanel extends JPanel implements ProductEditor
+public class DishPanel implements ProductEditor
 {
     private JPanel panel1;
     private JTextField nameField;
@@ -23,6 +23,9 @@ public class DishPanel extends JPanel implements ProductEditor
         sellPriceSpinner.setModel(new SpinnerNumberModel(20f, 0, 1000000, 1));
         ingTable.setModel(new IngredientTableModel(v));
     }
+
+    public JPanel getPanel()
+    { return panel1; }
 
     @Override
     public Product getProduct()

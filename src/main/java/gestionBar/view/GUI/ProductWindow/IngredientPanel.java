@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
-public class IngredientPanel extends JPanel implements ProductEditor
+public class IngredientPanel implements ProductEditor
 {
     private JTextField nameField;
     private JSpinner quantitySpinner;
@@ -23,6 +23,7 @@ public class IngredientPanel extends JPanel implements ProductEditor
     private JSpinner daySpinner;
     private JComboBox monthComboBox;
     private JSpinner yearSpinner;
+    private JPanel panel1;
 
     public IngredientPanel()
     {
@@ -45,6 +46,9 @@ public class IngredientPanel extends JPanel implements ProductEditor
 
         yearSpinner.setModel(new SpinnerNumberModel(nowDate.getYear(), nowDate.getYear(), nowDate.plusYears(10).getYear(), 1));
     }
+
+    public JPanel getPanel()
+    { return panel1; }
 
     @Override
     public Product getProduct()

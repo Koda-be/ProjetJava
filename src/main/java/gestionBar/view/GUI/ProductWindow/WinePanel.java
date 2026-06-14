@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Vector;
 
-public class WinePanel extends JPanel implements ProductEditor
+public class WinePanel implements ProductEditor
 {
     private JPanel panel1;
     private JTextField nameField;
@@ -29,6 +29,11 @@ public class WinePanel extends JPanel implements ProductEditor
         millesimeSpinner.setModel(new SpinnerNumberModel(2000, 1910, 2026, 1));
 
         colourComboBox.setModel(new DefaultComboBoxModel<>(Colour.values()));
+    }
+
+    public JPanel getPanel()
+    {
+        return panel1;
     }
 
     @Override
