@@ -3,6 +3,7 @@ package gestionBar.model.entities;
 import javax.swing.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Ingredient extends Product implements Buyable, Quantifiable
@@ -39,12 +40,12 @@ public class Ingredient extends Product implements Buyable, Quantifiable
     public void setExpirationDate(LocalDate newDate)
     { expirationDate = newDate; }
 
-    public static int FieldAmmount()
-    { return Product.FieldAmmount() + 1; }
+    public static int FieldAmount()
+    { return Product.FieldAmount() + 1; }
 
-    public static Vector<String> getFieldNames()
+    public static ArrayList<String> getFieldNames()
     {
-        Vector<String> v = Product.getFieldNames();
+        ArrayList<String> v = Product.getFieldNames();
         v.add("Expiration date");
 
         return v;

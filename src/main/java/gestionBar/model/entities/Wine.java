@@ -3,6 +3,7 @@ package gestionBar.model.entities;
 import gestionBar.model.exceptions.ESellPriceLowerThanBuyPrice;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Wine extends Product implements Buyable, Sellable, Quantifiable
@@ -81,13 +82,13 @@ public class Wine extends Product implements Buyable, Sellable, Quantifiable
     { millesime = newMil; }
 
 
-    public static int FieldAmmount()
-    { return Product.FieldAmmount() + 4; }
+    public static int FieldAmount()
+    { return Product.FieldAmount() + 4; }
 
-    public static Vector<String> getFieldNames()
+    public static ArrayList<String> getFieldNames()
     {
-        Vector<String> v = Product.getFieldNames();
-        v.insertElementAt("Sell price", 3);
+        ArrayList<String> v = Product.getFieldNames();
+        v.add(3,"Sell price");
         v.add("Cepage");
         v.add("Colour");
         v.add("Millesime");

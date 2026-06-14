@@ -3,29 +3,21 @@ package gestionBar.model.entities;
 import gestionBar.model.exceptions.ESellPriceLowerThanBuyPrice;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Dish extends Product implements Sellable
 {
     private double sellPrice;
-    private Vector<Ingredient> ingredients;
+    private Ingredient ingredient;
 
-    public Dish(String n, ImageIcon img, double sp, Vector<Ingredient> ing)
+    public Dish(String n, ImageIcon img, double sp, Ingredient ing)
     {
         super(n, img, 0, 0);
-        ingredients = ing;
+        ingredient = ing;
 
-        double bp = 0;
-        int q = ingredients.get(0).getQuantity();
-        for(Ingredient i : ingredients)
-        {
-            bp += i.getBuyPrice();
-
-            if (q > i.getQuantity()) q = i.getQuantity();
-        }
-
-        buyPrice = bp;
-        quantity = q;
+        buyPrice = ingredient.getBuyPrice();
+        quantity = ingredient.getQuantity();
 
         try
         {
@@ -43,15 +35,11 @@ public class Dish extends Product implements Sellable
         super();
 
         sellPrice = 0;
-        ingredients = new Vector<Ingredient>();
     }
 
     public double getBuyPrice()
     {
-        double sum = 0;
-        for (Ingredient ing : ingredients) sum += ing.getBuyPrice();
-
-        return sum;
+        return buyPrice;
     }
 
     public double getSellPrice()
@@ -61,40 +49,37 @@ public class Dish extends Product implements Sellable
 
     public int getQuantity()
     {
-        int min = ingredients.get(0).getQuantity();
-        for(Ingredient ing : ingredients) if(ing.getQuantity() < min) min = ing.getQuantity();
-
-        return min;
+        return quantity;
     }
 
-    public Vector<Ingredient> getIngredients()
+    public Ingredient getIngredient()
     {
-        return ingredients;
+        return ingredient;
     }
 
     public void setSellPrice(double newPrice) throws ESellPriceLowerThanBuyPrice
     {
-        if(newPrice < getBuyPrice()) throw(new ESellPriceLowerThanBuyPrice(this, getBuyPrice(), newPrice));
+        if(newPrice < buyPrice) throw(new ESellPriceLowerThanBuyPrice(this, buyPrice, newPrice));
 
         sellPrice = newPrice;
     }
 
-    public void setIngredients(Vector<Ingredient> i)
+    public void setIngredient(Ingredient i)
     {
-        ingredients = i;
+        ingredient = i;
 
-        buyPrice = getBuyPrice();
+        buyPrice = i.getBuyPrice();
 
         if(sellPrice < buyPrice) setSellPrice(buyPrice);
     }
 
-    public static int FieldAmmount()
-    { return Product.FieldAmmount() + 2; }
+    public static int FieldAmount()
+    { return Product.FieldAmount() + 2; }
 
-    public static Vector<String> getFieldNames()
+    public static ArrayList<String> getFieldNames()
     {
-        Vector<String> v = Product.getFieldNames();
-        v.insertElementAt("Sell price", 3);
+        ArrayList<String> v = Product.getFieldNames();
+        v.add(3, "Sell price");
         v.add("Ingredients");
 
         return v;
@@ -103,7 +88,7 @@ public class Dish extends Product implements Sellable
     @Override
     public String toString()
     {
-        return super.toString() + ", buy price: " + getBuyPrice() + ", sell price: " + sellPrice + ", quantity: " + getQuantity() + ", ingredients: " + ingredients;
+        return super.toString() + ", buy price: " + getBuyPrice() + ", sell price: " + sellPrice + ", quantity: " + getQuantity() + ", ingredients: " + ingredient;
     }
 
     public Object getFieldAt(int i)
@@ -117,7 +102,7 @@ public class Dish extends Product implements Sellable
             case 4:
                 return getQuantity();
             case 5:
-                return ingredients;
+                return getIngredient();
             default:
                 return null;
         }

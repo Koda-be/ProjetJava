@@ -12,6 +12,7 @@ import gestionBar.view.GUI.MainWindow.MainWindow;
 import gestionBar.view.ViewModelLayer;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class ViewModel implements ViewModelLayer
@@ -66,19 +67,19 @@ public class ViewModel implements ViewModelLayer
     }
 
     @Override
-    public Vector<Wine> getWines()
+    public ArrayList<Wine> getWines()
     {
         return null;
     }
 
     @Override
-    public Vector<Dish> getDishes()
+    public ArrayList<Dish> getDishes()
     {
         return null;
     }
 
     @Override
-    public Vector<Ingredient> getIngredients()
+    public ArrayList<Ingredient> getIngredients()
     {
         return null;
     }

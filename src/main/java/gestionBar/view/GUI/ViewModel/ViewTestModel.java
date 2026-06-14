@@ -11,15 +11,16 @@ import gestionBar.view.ViewModelLayer;
 
 import javax.swing.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class ViewTestModel implements ViewModelLayer
 {
     private Logger logger;
 
-    private Vector<Wine> wines;
-    private Vector<Dish> dishes;
-    private Vector<Ingredient> ingredients;
+    private ArrayList<Wine> wines;
+    private ArrayList<Dish> dishes;
+    private ArrayList<Ingredient> ingredients;
 
     private MainWindow mainWindow;
 
@@ -27,9 +28,9 @@ public class ViewTestModel implements ViewModelLayer
     {
         logger = new Logger(null, new MapAuthenticator());
 
-        wines = new Vector<>(3);
-        dishes = new Vector<>(3);
-        ingredients = new Vector<>(3);
+        wines = new ArrayList<>(3);
+        dishes = new ArrayList<>(3);
+        ingredients = new ArrayList<>(3);
 
         wines.add(new Wine("Wine1", null, 10f, 20f, 3, "Chardonnay", Colour.White, 2000));
         wines.add(new Wine("Wine2", new ImageIcon("src/ressources/images/Default.png"), 20f, 20f, 3, "Pommard", Colour.Red, 1970));
@@ -38,7 +39,9 @@ public class ViewTestModel implements ViewModelLayer
         ingredients.add(new Ingredient("ing2", new ImageIcon("src/ressources/images/Default"), 20, 3, LocalDate.now().plusYears(1)));
         ingredients.add(new Ingredient("ing3", null, 30, 4, LocalDate.now().plusDays(5)));
 
-        if(ingredients.clone() instanceof Vector<?>) dishes.add(new Dish("dish1", null, 100, (Vector<Ingredient>) ingredients.clone()));
+        dishes.add(new Dish("dish1", null, 100,  ingredients.get(0)));
+        dishes.add(new Dish("dish2", null, 120,  ingredients.get(1)));
+        dishes.add(new Dish("dish3", null, 300,  ingredients.get(1)));
     }
 
     @Override
@@ -102,19 +105,19 @@ public class ViewTestModel implements ViewModelLayer
     }
 
     @Override
-    public Vector<Wine> getWines()
+    public ArrayList<Wine> getWines()
     {
         return wines;
     }
 
     @Override
-    public Vector<Dish> getDishes()
+    public ArrayList<Dish> getDishes()
     {
         return dishes;
     }
 
     @Override
-    public Vector<Ingredient> getIngredients()
+    public ArrayList<Ingredient> getIngredients()
     {
         return ingredients;
     }

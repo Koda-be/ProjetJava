@@ -5,6 +5,7 @@ import gestionBar.model.entities.Ingredient;
 import gestionBar.model.entities.Product;
 import gestionBar.model.entities.Wine;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public interface ViewModelLayer
@@ -17,9 +18,9 @@ public interface ViewModelLayer
 
     void showInfoMessage(String title, String message);
 
-    Vector<Wine> getWines();
-    Vector<Dish> getDishes();
-    Vector<Ingredient> getIngredients();
+    ArrayList<Wine> getWines();
+    ArrayList<Dish> getDishes();
+    ArrayList<Ingredient> getIngredients();
 
     void quit();
 }

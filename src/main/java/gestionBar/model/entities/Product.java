@@ -1,6 +1,7 @@
 package gestionBar.model.entities;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public abstract class Product
@@ -48,12 +49,12 @@ public abstract class Product
 
     // ======= Other methods =======
 
-    public static int FieldAmmount()
+    public static int FieldAmount()
     { return 4; }
 
-    public static Vector<String> getFieldNames()
+    public static ArrayList<String> getFieldNames()
     {
-        Vector<String> v = new Vector<>();
+        ArrayList<String> v = new ArrayList<>();
 
         v.add("Name");
         v.add("Image path");

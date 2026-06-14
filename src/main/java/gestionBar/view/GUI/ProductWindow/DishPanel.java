@@ -9,7 +9,10 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.lang.reflect.Type;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Vector;
+
+import static java.lang.Boolean.valueOf;
 
 public class DishPanel implements ProductEditor
 {
@@ -18,7 +21,7 @@ public class DishPanel implements ProductEditor
     private JSpinner sellPriceSpinner;
     private JTable ingTable;
 
-    public DishPanel(Vector<Ingredient> v)
+    public DishPanel(ArrayList<Ingredient> v)
     {
         sellPriceSpinner.setModel(new SpinnerNumberModel(20f, 0, 1000000, 1));
         ingTable.setModel(new IngredientTableModel(v));
@@ -39,7 +42,11 @@ public class DishPanel implements ProductEditor
             JOptionPane.showMessageDialog(null, e.getMessage(), "Parse error", JOptionPane.ERROR_MESSAGE);
         }
 
-        return new Dish(nameField.getText(), null, (Float) sellPriceSpinner.getValue(), ((IngredientTableModel) ingTable.getModel()).getIngredients());
+        Double newSp = (Double) sellPriceSpinner.getValue();
+        Ingredient newIng = ((IngredientTableModel) ingTable.getModel()).getIngredient();
+        if(newSp < newIng.getBuyPrice()) newSp = newIng.getBuyPrice();
+
+        return new Dish(nameField.getText(), null, newSp, newIng);
     }
 
     @Override
@@ -57,45 +64,43 @@ public class DishPanel implements ProductEditor
         nameField.setText(d.getName());
         sellPriceSpinner.setValue(d.getSellPrice());
 
-        ((IngredientTableModel) ingTable.getModel()).setIngredients((d.getIngredients()));
+        ((IngredientTableModel) ingTable.getModel()).setIngredient((d.getIngredient()));
     }
 }
 
 class IngredientTableModel extends AbstractTableModel
 {
-    private Vector<Ingredient> ingredients;
-    private Vector<JCheckBox> checkBoxes;
+    private ArrayList<Ingredient> ingredients;
+    private ArrayList<Boolean> booleans;
+    private Dish dish;
 
-    public IngredientTableModel(Vector<Ingredient> v)
+    public IngredientTableModel(ArrayList<Ingredient> v)
     {
         ingredients = v;
-        checkBoxes = new Vector<>(ingredients.size());
+        booleans = new ArrayList<>(ingredients.size());
 
         for(int i = 0; i < ingredients.size(); i++)
         {
-            JCheckBox jcb = new JCheckBox();
-            jcb.setSelected(false);
-            checkBoxes.add(jcb);
+            booleans.add(Boolean.FALSE);
         }
     }
 
-    public IngredientTableModel(Vector<Ingredient> v, Dish d)
+    public IngredientTableModel(ArrayList<Ingredient> v, Dish d)
     {
         ingredients = v;
-        checkBoxes = new Vector<>(ingredients.size());
+        booleans = new ArrayList<>();
+        dish = d;
 
         for (Ingredient ingredient : ingredients)
         {
-            JCheckBox jcb = new JCheckBox();
-            jcb.setSelected(d.getIngredients().contains(ingredient));
-            checkBoxes.add(jcb);
+            booleans.add(d.getIngredient().equals(ingredient));
         }
     }
 
     @Override
     public Class getColumnClass(int c)
     {
-        if (c == 0) return JCheckBox.class;
+        if (c == 0) return Boolean.class;
         if (c == 1) return String.class;
         return null;
     }
@@ -109,9 +114,9 @@ class IngredientTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int l,int c)
     {
-        if(c < 3 && l < checkBoxes.size())
+        if(c < 3 && l < booleans.size())
         {
-            if(c == 0) return checkBoxes.get(l);
+            if(c == 0) return booleans.get(l);
 
             else return ingredients.get(l).getName();
         }
@@ -121,27 +126,33 @@ class IngredientTableModel extends AbstractTableModel
 
     @Override
     public void setValueAt(Object value,int l,int c) {
+        for(int i = 0; i < booleans.toArray().length; i++)
+        {
+            booleans.set(i, i == l);
+        }
+
+
     }
 
     @Override
     public boolean isCellEditable(int row,int column) {
-        return (row == 0);
+        return (column == 0);
     }
 
     public Ingredient getIngredientAt(int index) {
         return ingredients.get(index);
     }
 
-    public Vector<Ingredient> getIngredients()
+    public Ingredient getIngredient()
     {
-        Vector<Ingredient> v = new Vector<>();
-        for(int i = 0; i < ingredients.size(); i++) if(checkBoxes.get(i).isSelected()) v.add(ingredients.get(i));
+        Ingredient ing = null;
+        for(int i = 0; i < ingredients.size() && ing == null; i++) if(booleans.get(i)) ing = ingredients.get(i);
 
-        return v;
+        return ing;
     }
 
-    public void setIngredients(Vector<Ingredient> v)
+    public void setIngredient(Ingredient ing)
     {
-        for(int i = 0; i < ingredients.size(); i++) checkBoxes.get(i).setSelected(v.contains(ingredients.get(i)));
+        for(int i = 0; i < ingredients.size(); i++) booleans.set(i, ing.equals(ingredients.get(i)));
     }
 }

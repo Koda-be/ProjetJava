@@ -10,13 +10,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class ProductWindow extends JDialog implements ProductEditor
 {
     private Product product;
     private ImageIcon img;
-    private Vector<Ingredient> ing;
+    private ArrayList<Ingredient> ing;
 
     private JPanel mainPanel;
     private JButton chooseImageButton;
@@ -41,7 +42,7 @@ public class ProductWindow extends JDialog implements ProductEditor
     final static String EMPTY = "Empty";
     final static String CLASS = "Class";
 
-    public ProductWindow(Vector<Ingredient> ingredients)
+    public ProductWindow(ArrayList<Ingredient> ingredients)
     {
         super((Frame) null,"Add product", true);
         setMinimumSize(new Dimension(600, 400));
@@ -119,51 +120,6 @@ public class ProductWindow extends JDialog implements ProductEditor
                 setVisible(false);
             }
         });
-
-        addWindowListener(new WindowListener()
-        {
-            @Override
-            public void windowOpened(WindowEvent windowEvent)
-            {
-
-            }
-
-            @Override
-            public void windowClosing(WindowEvent windowEvent)
-            {
-                System.exit(1);
-            }
-
-            @Override
-            public void windowClosed(WindowEvent windowEvent)
-            {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent windowEvent)
-            {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent windowEvent)
-            {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent windowEvent)
-            {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent windowEvent)
-            {
-
-            }
-        });
         setContentPane(mainPanel);
     }
 
@@ -194,7 +150,7 @@ public class ProductWindow extends JDialog implements ProductEditor
         {
             pane = dishPanel;
             str = DISH;
-            product = new Dish(prod.getName(), prod.getImage(), ((Dish) prod).getSellPrice(), ((Dish) prod).getIngredients());
+            product = new Dish(prod.getName(), prod.getImage(), ((Dish) prod).getSellPrice(), ((Dish) prod).getIngredient());
         }
         else if(prod instanceof Ingredient)
         {
@@ -211,6 +167,7 @@ public class ProductWindow extends JDialog implements ProductEditor
             throw new EWrongTypeUsed("ProductTableModel.getColumnCount()", prod.getClass(), ev);
         }
 
+        currEditor = pane;
         pane.setProduct(product);
         ((CardLayout) fieldPanel.getLayout()).show(fieldPanel, str);
 
@@ -219,7 +176,7 @@ public class ProductWindow extends JDialog implements ProductEditor
 
     public static void main(String[] args)
     {
-        Vector<Ingredient> ingredients = new Vector<>(3);
+        ArrayList<Ingredient> ingredients = new ArrayList<>(3);
         ingredients.add(new Ingredient("ing1", null, 10, 5, LocalDate.now().plusMonths(2)));
         ingredients.add(new Ingredient("ing2", new ImageIcon("src/ressources/images/Default"), 20, 3, LocalDate.now().plusYears(1)));
         ingredients.add(new Ingredient("ing3", null, 30, 4, LocalDate.now().plusDays(5)));
