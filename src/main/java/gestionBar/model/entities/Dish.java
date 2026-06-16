@@ -37,19 +37,9 @@ public class Dish extends Product implements Sellable
         sellPrice = 0;
     }
 
-    public double getBuyPrice()
-    {
-        return buyPrice;
-    }
-
     public double getSellPrice()
     {
         return sellPrice;
-    }
-
-    public int getQuantity()
-    {
-        return quantity;
     }
 
     public Ingredient getIngredient()
@@ -83,6 +73,19 @@ public class Dish extends Product implements Sellable
         v.add("Ingredients");
 
         return v;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+
+        if(super.equals(o) && o instanceof Dish)
+        {
+            Dish d = (Dish)o;
+            return d.getSellPrice() == this.getSellPrice() &&  d.getIngredient().equals(this.getIngredient());
+        }
+
+        return false;
     }
 
     @Override
