@@ -1,6 +1,7 @@
 package gestionBar.view.GUI.Login;
 
 import gestionBar.model.accessors.Loggers.Logger;
+import gestionBar.model.accessors.authenticator.Authenticator;
 import gestionBar.model.accessors.authenticator.MapAuthenticator;
 
 import javax.swing.*;
@@ -10,7 +11,8 @@ import java.awt.event.KeyEvent;
 
 public class LoginWindow extends JDialog implements ActionListener
 {
-    private Logger logger;
+    private String username;
+    private String password;
 
     private JPanel mainPanel;
     private JTextField usernameField;
@@ -20,13 +22,12 @@ public class LoginWindow extends JDialog implements ActionListener
     private JPanel buttonPanel;
     private JPanel fieldPanel;
 
-    public LoginWindow(String tit, boolean mod, Logger log)
+    public LoginWindow(String tit, boolean mod)
     {
         super((JFrame) null, tit, mod);
         setSize(250, 150);
         setResizable(false);
         setContentPane(mainPanel);
-        logger = log;
 
         okButton.addActionListener(this);
         cancelButton.addActionListener(this);
@@ -36,40 +37,39 @@ public class LoginWindow extends JDialog implements ActionListener
 
     public static void main(String[] args)
     {
-        Logger logger = new Logger("userFile", new MapAuthenticator());
-        LoginWindow testWindow = new LoginWindow("testing", true, logger);
+        Authenticator logger = new MapAuthenticator();
+        LoginWindow testWindow = new LoginWindow("testing", true);
         testWindow.setVisible(true);
+        String[] strs = testWindow.getCredentials();
+
         testWindow.dispose();
 
-        if(logger.getLoginState())
-            JOptionPane.showMessageDialog(null, "Success! User logged in: " + logger.getUserFile(), "Login success", JOptionPane.INFORMATION_MESSAGE);
+
+        if(logger.authenticate(strs[0], strs[1]))
+            JOptionPane.showMessageDialog(null, "Success! User logged in: " + strs[0], "Login success", JOptionPane.INFORMATION_MESSAGE);
         else
             JOptionPane.showMessageDialog(null, "Login cancelled", "Login cancelled", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void checkLogin()
+    public String[] getCredentials()
     {
-        if (logger.AttemptLogin(usernameField.getText(), String.valueOf(passwordField.getPassword())))
-        {
-            dispose();
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(this, "Incorrect username or password", "Login error", JOptionPane.ERROR_MESSAGE);
-            usernameField.setText("");
-            passwordField.setText("");
-        }
+        return new String[] {username, password};
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getSource() == okButton) checkLogin();
-
+        if(e.getSource() == okButton)
+        {
+            username =  usernameField.getText();
+            password = new String(passwordField.getPassword());
+        }
         else
         {
-            logger.setLoginState(false);
-            dispose();
+            username = null;
+            password = null;
         }
+
+        setVisible(false);
     }
 }
