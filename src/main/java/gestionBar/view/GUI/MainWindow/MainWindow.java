@@ -2,11 +2,12 @@ package gestionBar.view.GUI.MainWindow;
 
 import gestionBar.model.entities.*;
 import gestionBar.model.exceptions.EWrongTypeUsed;
-import gestionBar.model.utilities.TypedVector;
+import gestionBar.view.GUI.ViewModel.ViewTestModel;
 import gestionBar.view.ViewModelLayer;
 
-import javax.lang.model.type.UnionType;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
@@ -15,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 
 public class MainWindow extends JFrame
@@ -24,6 +24,9 @@ public class MainWindow extends JFrame
 
     private JMenuItem menuItemLogin;
     private JMenuItem menuItemExit;
+    private JMenuItem menuItemAdd;
+    private JMenuItem menuItemEdit;
+    private JMenuItem menuItemDelete;
 
     private JTabbedPane tabbedPane1;
     private JPanel mainPanel;
@@ -37,7 +40,7 @@ public class MainWindow extends JFrame
     private JButton modifyButton;
     private JButton deleteButton;
 
-    private JTable table;
+    private JTable currentTable;
 
     public MainWindow(ViewModelLayer v)
     {
@@ -52,10 +55,7 @@ public class MainWindow extends JFrame
         menuItemLogin.addActionListener(new ActionListener()
         {
             @Override
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                vm.PromptForLogin();
-            }
+            public void actionPerformed(ActionEvent actionEvent) { vm.changeLogin(); }
         });
         menuItemExit = new JMenuItem("Exit");
         menuItemExit.addActionListener(new ActionListener()
@@ -63,44 +63,109 @@ public class MainWindow extends JFrame
             @Override
             public void actionPerformed(ActionEvent actionEvent)
             {
-                vm.quit();
+                vm.exit();
             }
         });
 
-        JMenu m = new JMenu("User");
-        m.add(menuItemLogin);
-        m.add(menuItemExit);
+        JMenu userMenu = new JMenu("User");
+        userMenu.add(menuItemLogin);
+        userMenu.add(menuItemExit);
+
+        ActionListener addListener = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) { vm.createProduct(); }
+        };
+
+        ActionListener editListener = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) { vm.updateProduct(getCurrentProduct()); }
+        };
+
+        ActionListener deleteListener = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) { vm.deleteProduct(getCurrentProduct()); }
+        };
+
+        menuItemAdd = new JMenuItem("Add product");
+        menuItemAdd.addActionListener(addListener);
+
+        menuItemEdit = new JMenuItem("Edit product");
+        menuItemEdit.addActionListener(editListener);
+
+        menuItemDelete = new JMenuItem("Delete product");
+        menuItemDelete.addActionListener(deleteListener);
+
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.add(menuItemAdd);
+        editMenu.add(menuItemEdit);
+        editMenu.add(menuItemDelete);
 
         JMenuBar mb = new JMenuBar();
-        mb.add(m);
+        mb.add(userMenu);
+        mb.add(editMenu);
 
         setJMenuBar(mb);
 
-        table = new JTable(new ProductTableModel(new ArrayList<Wine>()), new ProductTableColumnModel(Wine.class));
+        addButton.addActionListener(addListener);
+        modifyButton.addActionListener(editListener);
+        deleteButton.addActionListener(deleteListener);
 
-        wineTable = table;
-        dishTable = table;
-        ingTable = table;
+        tabbedPane1.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent)
+            {
+                switch(tabbedPane1.getSelectedIndex())
+                {
+                    case 0: currentTable = wineTable; break;
+                    case 1: currentTable = dishTable; break;
+                    case 2: currentTable = ingTable; break;
+                    default: throw new IndexOutOfBoundsException();
+                }
+            }
+        });
+
+        currentTable = wineTable;
+        wineTable.setModel(new ProductTableModel(vm.getWines()));
+        wineTable.setColumnModel(new ProductTableColumnModel(Wine.class));
+        dishTable.setModel(new ProductTableModel(vm.getDishes()));
+        dishTable.setColumnModel(new ProductTableColumnModel(Dish.class));
+        ingTable.setModel(new ProductTableModel(vm.getIngredients()));
+        ingTable.setColumnModel(new ProductTableColumnModel(Ingredient.class));
 
         setContentPane(mainPanel);
     }
 
     public static void main(String[] args)
     {
-        Vector<Wine> vw = new Vector<>();
+        ArrayList<Wine> aw = new ArrayList<>();
 
-        vw.add(new Wine("Wine1", new ImageIcon("src/ressources/images/Default.png"), 10, 20, 3, "Cepage1", Colour.Red, 1970));
-        vw.add(new Wine("Wine2", new ImageIcon("src/ressources/images/Default.png"), 20, 21, 4, "Cepage2", Colour.White, 1980));
+        aw.add(new Wine("Wine1", new ImageIcon("src/ressources/images/Default.png"), 10, 20, 3, "Cepage1", Colour.Red, 1970));
+        aw.add(new Wine("Wine2", new ImageIcon("src/ressources/images/Default.png"), 20, 21, 4, "Cepage2", Colour.White, 1980));
 
-        MainWindow w = new MainWindow(null);
+        MainWindow w = new MainWindow(new ViewTestModel());
 
         w.setVisible(true);
     }
 
+    public Product getCurrentProduct()
+    {
+        return switch (tabbedPane1.getSelectedIndex())
+        {
+            case 0 -> vm.getWines().get(wineTable.getSelectedRow());
+            case 1 -> vm.getDishes().get(dishTable.getSelectedRow());
+            case 2 -> vm.getIngredients().get(ingTable.getSelectedRow());
+            default -> throw new IndexOutOfBoundsException();
+        };
+    }
+
     public void setTable(ArrayList<? extends Product> a)
     {
-        table.setModel(new ProductTableModel(a));
-        table.setColumnModel(new ProductTableColumnModel( !a.isEmpty() ? a.get(0).getClass() : null));
+        currentTable.setModel(new ProductTableModel(a));
+        currentTable.setColumnModel(new ProductTableColumnModel( !a.isEmpty() ? a.get(0).getClass() : null));
     }
 }
 
