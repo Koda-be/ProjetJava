@@ -9,37 +9,31 @@ import gestionBar.model.entities.Wine;
 import gestionBar.view.GUI.Login.LoginWindow;
 
 import gestionBar.view.GUI.MainWindow.MainWindow;
+import gestionBar.view.ViewLayer;
 import gestionBar.view.ViewModelLayer;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
-public class ViewModel implements ViewModelLayer
+public class ViewModel implements ViewModelLayer, ViewLayer
 {
-    private ControlLayer c;
-    private Logger logger;
-
+    private ControlLayer controller;
     private MainWindow mainWindow;
 
-    public ViewModel(Logger l)
+    public ViewModel(ControlLayer c)
     {
-        logger = l;
+        controller = c;
     }
 
     @Override
-    public void PromptForLogin()
+    public String[] PromptForLogin()
     {
-        LoginWindow loginWindow = new LoginWindow("Authenticator", true, logger);
+        LoginWindow loginWindow = new LoginWindow("Authenticator", true);
         loginWindow.setVisible(true);
+        String[] credentials = loginWindow.getCredentials();
         loginWindow.dispose();
 
-        if(!(logger.getLoginState()))
-        {
-            JOptionPane.showMessageDialog(null, "Login cancelled, quitting", "Login cancelled", JOptionPane.INFORMATION_MESSAGE);
-            System.out.println("Login cancelled");
-            System.exit(1);
-        }
+        return credentials;
     }
 
     @Override
@@ -57,13 +51,52 @@ public class ViewModel implements ViewModelLayer
     @Override
     public void displayProducts()
     {
+        if(mainWindow != null)
+        {
+            mainWindow.setVisible(false);
+            mainWindow.dispose();
+        }
+
         mainWindow = new MainWindow(this);
+        mainWindow.setVisible(true);
     }
 
     @Override
     public void showInfoMessage(String title, String message)
     {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
+    @Override
+    public void showErrorMessage(String title, String message)
+    {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    public void changeLogin()
+    {
+        controller.changeLogin();
+    }
+
+    public void exit()
+    {
+        controller.exit();
+    }
+
+    public void createProduct()
+    {
+        controller.createProduct();
+    }
+
+    public void updateProduct(Product p)
+    {
+        controller.updateProduct(p);
+    }
+
+    public void deleteProduct(Product p)
+    {
+        controller.deleteProduct(p);
     }
 
     @Override
@@ -82,11 +115,5 @@ public class ViewModel implements ViewModelLayer
     public ArrayList<Ingredient> getIngredients()
     {
         return null;
-    }
-
-    @Override
-    public void quit()
-    {
-        System.exit(0);
     }
 }

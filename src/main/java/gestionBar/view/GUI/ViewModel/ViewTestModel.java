@@ -1,20 +1,19 @@
 package gestionBar.view.GUI.ViewModel;
 
-import gestionBar.Controller.ControlLayer;
 import gestionBar.model.accessors.Loggers.Logger;
 import gestionBar.model.accessors.authenticator.MapAuthenticator;
 import gestionBar.model.entities.*;
 import gestionBar.view.GUI.Login.LoginWindow;
 import gestionBar.view.GUI.MainWindow.MainWindow;
 import gestionBar.view.GUI.ProductWindow.ProductWindow;
+import gestionBar.view.ViewLayer;
 import gestionBar.view.ViewModelLayer;
 
 import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Vector;
 
-public class ViewTestModel implements ViewModelLayer
+public class ViewTestModel implements ViewModelLayer, ViewLayer
 {
     private Logger logger;
 
@@ -45,18 +44,14 @@ public class ViewTestModel implements ViewModelLayer
     }
 
     @Override
-    public void PromptForLogin()
+    public String[] PromptForLogin()
     {
-        LoginWindow loginWindow = new LoginWindow("Authenticator", true, logger);
+        LoginWindow loginWindow = new LoginWindow("Authenticator", true);
         loginWindow.setVisible(true);
+        String[] credentials = loginWindow.getCredentials();
         loginWindow.dispose();
 
-        if(!(logger.getLoginState()))
-        {
-            JOptionPane.showMessageDialog(null, "Login cancelled, quitting", "Login cancelled", JOptionPane.INFORMATION_MESSAGE);
-            System.out.println("Login cancelled");
-            System.exit(1);
-        }
+        return credentials;
     }
 
     @Override
@@ -105,6 +100,39 @@ public class ViewTestModel implements ViewModelLayer
     }
 
     @Override
+    public void showErrorMessage(String title, String message)
+    {
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+
+    public void changeLogin()
+    {
+        PromptForLogin();
+    }
+
+    public void exit()
+    {
+        System.exit(0);
+    }
+
+    public void createProduct()
+    {
+        Product p = PromptForNewProduct();
+        System.out.println(p);
+    }
+
+    public void updateProduct(Product p)
+    {
+        System.out.println(PromptForUpdateProduct(p));
+    }
+
+    public void deleteProduct(Product p)
+    {
+        showInfoMessage("Delete Product", "Product has been deleted: " + p);
+    }
+
+    @Override
     public ArrayList<Wine> getWines()
     {
         return wines;
@@ -122,9 +150,5 @@ public class ViewTestModel implements ViewModelLayer
         return ingredients;
     }
 
-    @Override
-    public void quit()
-    {
-        System.exit(0);
-    }
+
 }
